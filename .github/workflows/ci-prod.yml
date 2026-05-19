@@ -50,9 +50,5 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/shopflow:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/shopflow:v1.${{ github.run_number }}
 
-      - name: Deploy to Render
-        run: |
-          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
-
       - name: Confirm production deploy
         run: echo "✅ Production deploy triggered for v1.${{ github.run_number }}"
