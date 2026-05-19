@@ -9,6 +9,7 @@ on:
 jobs:
   staging-pipeline:
     runs-on: ubuntu-latest
+    environment: staging
 
     steps:
       - name: Checkout code
