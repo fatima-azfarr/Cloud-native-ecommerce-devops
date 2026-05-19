@@ -125,4 +125,4 @@ Stages: `Checkout` → `Install` → `Lint & Test` → `Docker Build` → `Push`
 
 | Name | Role | Page |
 |------|------|------|
-| Team Lead | DevOps + Home Page | index.html |
+| Team Lead | DevOps + Home Page | index.html |# deployment trigger
