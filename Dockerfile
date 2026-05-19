@@ -1,12 +1,7 @@
-FROM node:20-alpine
+FROM nginx:alpine
 
-WORKDIR /app
+COPY src/frontend /usr/share/nginx/html
 
-COPY package*.json ./
-RUN npm install --omit=dev
+EXPOSE 80
 
-COPY . .
-
-EXPOSE 3001
-
-CMD ["node", "server.js"]
+CMD ["nginx", "-g", "daemon off;"]
