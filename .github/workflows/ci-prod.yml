@@ -1,0 +1,57 @@
+name: CI/CD - Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  production-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Install all service dependencies
+        run: |
+          cd src/user-service && npm install
+          cd ../product-service && npm install
+          cd ../order-service && npm install
+          cd ../notification-service && npm install
+
+      - name: Run tests
+        run: |
+          cd src/user-service && npm test --if-present
+          cd ../product-service && npm test --if-present
+          cd ../order-service && npm test --if-present
+          cd ../notification-service && npm test --if-present
+
+      - name: Build Docker image
+        run: |
+          docker build -t shopflow:v1.${{ github.run_number }} .
+          docker build -t shopflow:latest .
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push production image
+        run: |
+          docker tag shopflow:latest ${{ secrets.DOCKER_USERNAME }}/shopflow:latest
+          docker tag shopflow:latest ${{ secrets.DOCKER_USERNAME }}/shopflow:v1.${{ github.run_number }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/shopflow:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/shopflow:v1.${{ github.run_number }}
+
+      - name: Deploy to Render
+        run: |
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+
+      - name: Confirm production deploy
+        run: echo "✅ Production deploy triggered for v1.${{ github.run_number }}"

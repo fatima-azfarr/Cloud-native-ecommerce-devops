@@ -1,0 +1,50 @@
+name: CI - Development
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Install user-service deps
+        working-directory: src/user-service
+        run: npm install
+
+      - name: Install product-service deps
+        working-directory: src/product-service
+        run: npm install
+
+      - name: Install order-service deps
+        working-directory: src/order-service
+        run: npm install
+
+      - name: Install notification-service deps
+        working-directory: src/notification-service
+        run: npm install
+
+      - name: Run tests
+        run: |
+          cd src/user-service && npm test --if-present
+          cd ../product-service && npm test --if-present
+          cd ../order-service && npm test --if-present
+          cd ../notification-service && npm test --if-present
+
+      - name: Build Docker image
+        run: |
+          docker build -t shopflow-dev:latest .
+
+      - name: Confirm build success
+        run: echo "✅ Dev build passed on branch develop"
