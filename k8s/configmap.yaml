@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shopflow-config
+data:
+  USER_SERVICE_PORT:         "3001"
+  PRODUCT_SERVICE_PORT:      "3002"
+  ORDER_SERVICE_PORT:        "3003"
+  NOTIFICATION_SERVICE_PORT: "3004"
+  NODE_ENV:                  "production"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: shopflow-secrets
+type: Opaque
+stringData:
+  JWT_SECRET:     "shopflow-jwt-super-secret-key"
+  SMTP_PASSWORD:  "smtp-password-here"
+  DB_PASSWORD:    "db-password-here"
