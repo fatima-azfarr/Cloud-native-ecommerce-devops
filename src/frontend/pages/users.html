@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Dashboard - Users</title>
+    <link rel="stylesheet" href="../style.css"></head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="brand-icon">◈</span>
+            <span class="brand-name">ShopFlow</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="users.html" id="nav-users">Users</a></li>
+            <li><a href="products.html" id="nav-products">Products</a></li>
+            <li><a href="orders.html" id="nav-orders">Orders</a></li>
+            <li><a href="notifications.html" id="nav-notifs">Notifications</a></li>
+        </ul>
+        <div class="nav-status">
+            <span class="status-dot"></span> All Systems Operational
+        </div>
+    </nav>
+
+
+    <header class="page-header">
+        <h2>User Management</h2>
+        <p>View, add, and manage registered users — User Service</p>
+    </header>
+
+    <div class="page-content">
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value" id="total-users">6</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--success-color);">
+                <div class="stat-value" id="active-users">5</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--accent-color);">
+                <div class="stat-value" id="admin-users">2</div>
+                <div class="stat-label">Admins</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--warning-color);">
+                <div class="stat-value" id="new-users">1</div>
+                <div class="stat-label">New This Month</div>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search by name or email...">
+                <button class="btn btn-primary" onclick="searchUsers()">Search</button>
+            </div>
+            <button class="btn btn-primary" onclick="openModal()">+ Add User</button>
+        </div>
+
+        <div class="data-table-wrapper">
+            <table class="data-table" id="users-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Joined</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="modal-overlay" id="user-modal">
+        <div class="modal">
+            <h3 id="modal-title">Add New User</h3>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="input-name" placeholder="e.g. Fatima">
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="input-email" placeholder="e.g. Fatima@example.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="input-password" placeholder="Min. 8 characters">
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="input-role">
+                    <option value="Customer">Customer</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveUser()">Save User</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 E-Commerce DevOps Project | COMSATS University Islamabad, Lahore Campus</p>
+        
+    </footer>
+
+    <script>
+        let users = [
+            { id: 1, name: "Umr",    email: "Umar@example.com",  role: "Admin",    joined: "2024-11-01", status: "Active" },
+            { id: 2, name: "Fatima",     email: "Fatima@example.com",   role: "Customer", joined: "2024-11-15", status: "Active" },
+            { id: 3, name: "Ali",  email: "Ali@example.com",  role: "Manager",  joined: "2024-12-03", status: "Active" },
+            { id: 4, name: "Adan",   email: "Adan@example.com",   role: "Customer", joined: "2024-12-20", status: "Inactive" },
+            { id: 5, name: "Hamza",   email: "Hamza@example.com",  role: "Admin",    joined: "2025-01-10", status: "Active" },
+            { id: 6, name: "Iffat",    email: "Iffat@example.com",   role: "Customer", joined: "2025-05-01", status: "Active" },
+        ];
+
+        let editingId = null;
+
+        function getInitials(name) {
+            return name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+        }
+
+        function roleBadge(role) {
+            const cls = role === "Admin" ? "role-admin" : role === "Manager" ? "role-manager" : "role-customer";
+            return `<span class="role-badge ${cls}">${role}</span>`;
+        }
+
+        function renderTable(list) {
+            const tbody = document.getElementById("users-tbody");
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="6"><div class="no-results">No users found.</div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(u => `
+                <tr>
+                    <td><span class="avatar">${getInitials(u.name)}</span>${u.name}</td>
+                    <td>${u.email}</td>
+                    <td>${roleBadge(u.role)}</td>
+                    <td>${u.joined}</td>
+                    <td><span class="${u.status === 'Active' ? 'status-active' : 'status-pending'}">● ${u.status}</span></td>
+                    <td>
+                        <div class="actions-col">
+                            <button class="btn btn-edit" onclick="editUser(${u.id})">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteUser(${u.id})">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        function updateStats() {
+            document.getElementById("total-users").textContent = users.length;
+            document.getElementById("active-users").textContent = users.filter(u => u.status === "Active").length;
+            document.getElementById("admin-users").textContent = users.filter(u => u.role === "Admin").length;
+            const thisMonth = new Date().toISOString().slice(0, 7);
+            document.getElementById("new-users").textContent = users.filter(u => u.joined.startsWith(thisMonth)).length;
+        }
+
+        function searchUsers() {
+            const q = document.getElementById("search-input").value.toLowerCase();
+            renderTable(users.filter(u => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)));
+        }
+
+        document.getElementById("search-input").addEventListener("keyup", e => {
+            if (e.key === "Enter") searchUsers();
+            if (!e.target.value) renderTable(users);
+        });
+
+        function openModal(id = null) {
+            editingId = id;
+            document.getElementById("modal-title").textContent = id ? "Edit User" : "Add New User";
+            if (id) {
+                const u = users.find(u => u.id === id);
+                document.getElementById("input-name").value = u.name;
+                document.getElementById("input-email").value = u.email;
+                document.getElementById("input-password").value = "";
+                document.getElementById("input-role").value = u.role;
+            } else {
+                document.getElementById("input-name").value = "";
+                document.getElementById("input-email").value = "";
+                document.getElementById("input-password").value = "";
+                document.getElementById("input-role").value = "Customer";
+            }
+            document.getElementById("user-modal").classList.add("open");
+        }
+
+        function closeModal() {
+            document.getElementById("user-modal").classList.remove("open");
+            editingId = null;
+        }
+
+        function saveUser() {
+            const name  = document.getElementById("input-name").value.trim();
+            const email = document.getElementById("input-email").value.trim();
+            const role  = document.getElementById("input-role").value;
+            if (!name || !email) { alert("Name and email are required."); return; }
+
+            if (editingId) {
+                const u = users.find(u => u.id === editingId);
+                u.name = name; u.email = email; u.role = role;
+            } else {
+                const today = new Date().toISOString().slice(0, 10);
+                users.push({ id: Date.now(), name, email, role, joined: today, status: "Active" });
+            }
+            updateStats();
+            renderTable(users);
+            closeModal();
+        }
+
+        function editUser(id) { openModal(id); }
+
+        function deleteUser(id) {
+            if (!confirm("Delete this user?")) return;
+            users = users.filter(u => u.id !== id);
+            updateStats();
+            renderTable(users);
+        }
+
+        document.getElementById("user-modal").addEventListener("click", function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        renderTable(users);
+        updateStats();
+    </script>
+</body>
+</html>

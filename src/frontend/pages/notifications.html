@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Dashboard - Notifications</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+        <!-- NAV -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="brand-icon">◈</span>
+            <span class="brand-name">ShopFlow</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="users.html" id="nav-users">Users</a></li>
+            <li><a href="products.html" id="nav-products">Products</a></li>
+            <li><a href="orders.html" id="nav-orders">Orders</a></li>
+            <li><a href="notifications.html" id="nav-notifs">Notifications</a></li>
+        </ul>
+        <div class="nav-status">
+            <span class="status-dot"></span> All Systems Operational
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h2>Notification Service</h2>
+        <p>Send and manage system notifications — Notification Service</p>
+    </header>
+
+    <div class="page-content">
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value" id="total-notifs">0</div>
+                <div class="stat-label">Total Sent</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--success-color);">
+                <div class="stat-value" id="delivered-notifs">0</div>
+                <div class="stat-label">Delivered</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--accent-color);">
+                <div class="stat-value" id="failed-notifs">0</div>
+                <div class="stat-label">Failed</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--warning-color);">
+                <div class="stat-value" id="pending-notifs">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+        </div>
+
+        <!-- Compose Panel -->
+        <div class="compose-panel">
+            <h3 class="compose-title">POST /api/notify — Send Notification</h3>
+            <div class="compose-grid">
+                <div class="form-group">
+                    <label>Recipient</label>
+                    <select id="n-recipient">
+                        <option value="Araish@example.com">Araish (Araish@example.com)</option>
+                        <option value="Fatima@example.com">Fatima (Fatima@example.com)</option>
+                        <option value="Uswah@example.com">Uswah (Uswah@example.com)</option>
+                        <option value="Adan@example.com">Adan (Adan@example.com)</option>
+                        <option value="Muneefah@example.com">Muneefah (Muneefah@example.com)</option>
+                        <option value="Iffat@example.com">Iffat (Iffat@example.com)</option>
+                        <option value="all">All Users (Broadcast)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="n-type">
+                        <option value="Order Update">Order Update</option>
+                        <option value="Promotional">Promotional</option>
+                        <option value="System Alert">System Alert</option>
+                        <option value="Security">Security</option>
+                        <option value="Payment">Payment</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Channel</label>
+                    <select id="n-channel">
+                        <option value="Email">Email</option>
+                        <option value="SMS">SMS</option>
+                        <option value="Push">Push Notification</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Subject</label>
+                    <input type="text" id="n-subject" placeholder="e.g. Your order has been shipped">
+                </div>
+                <div class="form-group compose-full">
+                    <label>Message</label>
+                    <textarea id="n-message" rows="3" placeholder="Enter notification message..."></textarea>
+                </div>
+            </div>
+            <div class="compose-actions">
+                <button class="btn btn-secondary" onclick="clearCompose()">Clear</button>
+                <button class="btn btn-primary" onclick="sendNotification()">Send Notification</button>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search by recipient or subject...">
+                    <button class="btn btn-primary" onclick="searchNotifs()">Search</button>
+                </div>
+                <select class="filter-select" id="type-filter" onchange="filterNotifs()">
+                    <option value="">All Types</option>
+                    <option value="Order Update">Order Update</option>
+                    <option value="Promotional">Promotional</option>
+                    <option value="System Alert">System Alert</option>
+                    <option value="Security">Security</option>
+                    <option value="Payment">Payment</option>
+                </select>
+                <select class="filter-select" id="status-filter" onchange="filterNotifs()">
+                    <option value="">Status</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Failed">Failed</option>
+                </select>
+            </div>
+            <button class="btn btn-danger-outline" onclick="clearAll()">Clear All</button>
+        </div>
+
+        <!-- Table -->
+        <div class="data-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Recipient</th>
+                        <th>Subject</th>
+                        <th>Type</th>
+                        <th>Channel</th>
+                        <th>Sent At</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="notifs-tbody"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detail-modal">
+        <div class="modal">
+            <h3>Notification Details</h3>
+            <div id="notif-detail-content"></div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+                <button class="btn btn-primary" id="retry-btn" style="display:none;" onclick="retryNotif()">Retry</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 E-Commerce DevOps Project | COMSATS University Islamabad, Lahore Campus</p>
+        
+    </footer>
+
+    <script>
+        let notifications = [
+            {
+                id: "N001", recipient: "Araish@example.com", subject: "Order Delivered",
+                message: "Your order ORD-1001 has been delivered successfully.", type: "Order Update",
+                channel: "Email", sentAt: "2025-04-10 14:32", status: "Delivered"
+            },
+            {
+                id: "N002", recipient: "Fatima@example.com", subject: "Order Shipped",
+                message: "Your order ORD-1002 is on the way. Expected delivery in 2 days.", type: "Order Update",
+                channel: "SMS", sentAt: "2025-04-15 09:10", status: "Delivered"
+            },
+            {
+                id: "N003", recipient: "all", subject: "Summer Sale — 20% Off",
+                message: "Enjoy 20% off on all electronics this weekend. Use code: SUMMER20.", type: "Promotional",
+                channel: "Email", sentAt: "2025-04-20 11:00", status: "Delivered"
+            },
+            {
+                id: "N004", recipient: "Uswah@example.com", subject: "Payment Confirmed",
+                message: "Payment of PKR 3,400 for order ORD-1003 has been received.", type: "Payment",
+                channel: "Push", sentAt: "2025-04-22 16:45", status: "Delivered"
+            },
+            {
+                id: "N005", recipient: "Adan@example.com", subject: "Verify Your Account",
+                message: "Use OTP 482910 to verify your account. Valid for 10 minutes.", type: "Security",
+                channel: "SMS", sentAt: "2025-05-01 08:55", status: "Failed"
+            },
+            {
+                id: "N006", recipient: "Muneefah@example.com", subject: "Order Cancelled",
+                message: "Your order ORD-1005 has been cancelled as requested.", type: "Order Update",
+                channel: "Email", sentAt: "2025-05-05 13:20", status: "Delivered"
+            },
+            {
+                id: "N007", recipient: "Iffat@example.com", subject: "Order Confirmed",
+                message: "Your order ORD-1006 has been confirmed and is being processed.", type: "Order Update",
+                channel: "Email", sentAt: "2025-05-10 10:05", status: "Pending"
+            },
+        ];
+
+        let viewingId = null;
+        let nCounter  = 8;
+
+        function typeClass(t) {
+            return {
+                "Order Update":  "type-order",
+                "Promotional":   "type-promo",
+                "System Alert":  "type-system",
+                "Security":      "type-security",
+                "Payment":       "type-payment",
+            }[t] || "";
+        }
+
+        function statusClass(s) {
+            return { Delivered: "badge-delivered", Pending: "badge-pending", Failed: "badge-failed" }[s] || "";
+        }
+
+        function fmtRecipient(r) {
+            return r === "all" ? "<strong>All Users</strong>" : r;
+        }
+
+        function renderTable(list) {
+            const tbody = document.getElementById("notifs-tbody");
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="8"><div class="no-results">No notifications found.</div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(n => `
+                <tr>
+                    <td><strong>${n.id}</strong></td>
+                    <td>${fmtRecipient(n.recipient)}</td>
+                    <td>${n.subject}</td>
+                    <td><span class="type-badge ${typeClass(n.type)}">${n.type}</span></td>
+                    <td>${n.channel}</td>
+                    <td>${n.sentAt}</td>
+                    <td><span class="status-badge ${statusClass(n.status)}">${n.status}</span></td>
+                    <td>
+                        <div class="actions-col">
+                            <button class="btn btn-view btn-sm" onclick="viewNotif('${n.id}')">View</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteNotif('${n.id}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        function updateStats() {
+            document.getElementById("total-notifs").textContent     = notifications.length;
+            document.getElementById("delivered-notifs").textContent = notifications.filter(n => n.status === "Delivered").length;
+            document.getElementById("failed-notifs").textContent    = notifications.filter(n => n.status === "Failed").length;
+            document.getElementById("pending-notifs").textContent   = notifications.filter(n => n.status === "Pending").length;
+        }
+
+        function getFiltered() {
+            const q  = document.getElementById("search-input").value.toLowerCase();
+            const t  = document.getElementById("type-filter").value;
+            const st = document.getElementById("status-filter").value;
+            return notifications.filter(n =>
+                (!q  || n.recipient.toLowerCase().includes(q) || n.subject.toLowerCase().includes(q)) &&
+                (!t  || n.type === t) &&
+                (!st || n.status === st)
+            );
+        }
+
+        function searchNotifs() { renderTable(getFiltered()); }
+        function filterNotifs() { renderTable(getFiltered()); }
+
+        document.getElementById("search-input").addEventListener("keyup", e => {
+            if (e.key === "Enter") searchNotifs();
+            if (!e.target.value) filterNotifs();
+        });
+
+        function viewNotif(id) {
+            viewingId = id;
+            const n = notifications.find(n => n.id === id);
+            document.getElementById("notif-detail-content").innerHTML = `
+                <div class="detail-section">
+                    <h4>Meta</h4>
+                    <div class="detail-row"><span>ID</span><span>${n.id}</span></div>
+                    <div class="detail-row"><span>Sent At</span><span>${n.sentAt}</span></div>
+                    <div class="detail-row"><span>Channel</span><span>${n.channel}</span></div>
+                    <div class="detail-row"><span>Type</span><span>${n.type}</span></div>
+                    <div class="detail-row"><span>Status</span>
+                        <span class="status-badge ${statusClass(n.status)}">${n.status}</span>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h4>Recipient</h4>
+                    <div class="detail-row"><span>To</span><span>${fmtRecipient(n.recipient)}</span></div>
+                </div>
+                <div class="detail-section">
+                    <h4>Content</h4>
+                    <div class="detail-row"><span>Subject</span><span>${n.subject}</span></div>
+                    <div style="margin-top:0.5rem; font-size:0.9rem; color:var(--text-dark); background:var(--light-bg); padding:0.8rem; border-radius:4px;">${n.message}</div>
+                </div>
+            `;
+            document.getElementById("retry-btn").style.display = n.status === "Failed" ? "inline-block" : "none";
+            document.getElementById("detail-modal").classList.add("open");
+        }
+
+        function retryNotif() {
+            const n = notifications.find(n => n.id === viewingId);
+            n.status = "Delivered";
+            updateStats();
+            renderTable(getFiltered());
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById("detail-modal").classList.remove("open");
+            viewingId = null;
+        }
+
+        function deleteNotif(id) {
+            if (!confirm("Delete this notification record?")) return;
+            notifications = notifications.filter(n => n.id !== id);
+            updateStats();
+            renderTable(getFiltered());
+        }
+
+        function clearAll() {
+            if (!confirm("Clear all notification records?")) return;
+            notifications = [];
+            updateStats();
+            renderTable([]);
+        }
+
+        function clearCompose() {
+            document.getElementById("n-subject").value  = "";
+            document.getElementById("n-message").value  = "";
+        }
+
+        function sendNotification() {
+            const recipient = document.getElementById("n-recipient").value;
+            const type      = document.getElementById("n-type").value;
+            const channel   = document.getElementById("n-channel").value;
+            const subject   = document.getElementById("n-subject").value.trim();
+            const message   = document.getElementById("n-message").value.trim();
+
+            if (!subject || !message) { alert("Subject and message are required."); return; }
+
+            const now = new Date();
+            const sentAt = now.toISOString().slice(0, 10) + " " + now.toTimeString().slice(0, 5);
+
+            notifications.unshift({
+                id: "N" + String(nCounter++).padStart(3, "0"),
+                recipient, subject, message, type, channel, sentAt, status: "Delivered"
+            });
+
+            updateStats();
+            renderTable(getFiltered());
+            clearCompose();
+        }
+
+        document.getElementById("detail-modal").addEventListener("click", function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        renderTable(notifications);
+        updateStats();
+    </script>
+
+    <script>
+        document.getElementById("nav-notifs").classList.add("active");
+    </script>
+</body>
+</html>

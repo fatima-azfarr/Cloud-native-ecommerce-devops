@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopFlow — E-Commerce Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="brand-icon">⬡</span>
+      <span class="brand-name">ShopFlow</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="pages/users.html">Users</a></li>
+      <li><a href="pages/products.html">Products</a></li>
+      <li><a href="pages/orders.html">Orders</a></li>
+      <li><a href="pages/notifications.html">Notifications</a></li>
+    </ul>
+    <div class="nav-status">
+      <span class="status-dot"></span> All Systems Operational
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-grid-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Cloud-Native Microservices</div>
+      <h1 class="hero-title">
+        E-Commerce<br/>
+        <span class="gradient-text">DevOps Platform</span>
+      </h1>
+      <p class="hero-subtitle">
+        A fully containerized, Kubernetes-orchestrated e-commerce system with automated CI/CD pipelines, zero-downtime deployments, and real-time monitoring.
+      </p>
+      <div class="hero-actions">
+        <a href="pages/products.html" class="btn btn-primary">Browse Products</a>
+        <a href="pages/orders.html" class="btn btn-outline">View Orders</a>
+      </div>
+
+      <div class="pipeline-strip">
+        <div class="pipeline-step">Checkout</div>
+        <span class="pipeline-arrow">→</span>
+        <div class="pipeline-step">Build</div>
+        <span class="pipeline-arrow">→</span>
+        <div class="pipeline-step">Test</div>
+        <span class="pipeline-arrow">→</span>
+        <div class="pipeline-step">Docker Build</div>
+        <span class="pipeline-arrow">→</span>
+        <div class="pipeline-step">Push</div>
+        <span class="pipeline-arrow">→</span>
+        <div class="pipeline-step">Deploy</div>
+        <span class="pipeline-arrow">→</span>
+        <div class="pipeline-step">Notify</div>
+      </div>
+
+      <div class="pipeline-log">
+        <p>✔ Docker image built: shopflow:v1.4.2</p>
+        <p>✔ Pushed to registry</p>
+        <p>▶ Deploying to Kubernetes...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MICROSERVICES FEATURES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-label">Microservices Architecture</div>
+      <h2 class="section-title">Four Independent Services</h2>
+      <p class="section-sub">Each service is independently containerized, deployed, and scaled</p>
+    </div>
+    <div class="features-grid">
+      <a href="pages/users.html" class="feature-card">
+        <div class="feature-icon">👤</div>
+        <h3>User Service</h3>
+        <p>JWT authentication, user registration, login, and profile management via REST APIs.</p>
+        <span class="feature-link">Explore →</span>
+      </a>
+      <a href="pages/products.html" class="feature-card">
+        <div class="feature-icon">📦</div>
+        <h3>Product Service</h3>
+        <p>Product catalog, inventory management, search and filtering with full CRUD APIs.</p>
+        <span class="feature-link">Explore →</span>
+      </a>
+      <a href="pages/orders.html" class="feature-card">
+        <div class="feature-icon">🛒</div>
+        <h3>Order Service</h3>
+        <p>Order processing, status tracking, and inter-service communication with transactional integrity.</p>
+        <span class="feature-link">Explore →</span>
+      </a>
+      <a href="pages/notifications.html" class="feature-card">
+        <div class="feature-icon">🔔</div>
+        <h3>Notification Service</h3>
+        <p>Email and in-app notifications for order confirmations, alerts, and system events.</p>
+        <span class="feature-link">Explore →</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- TECH STACK -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-label">Technology Stack</div>
+      <h2 class="section-title">Built with Enterprise DevOps</h2>
+    </div>
+    <div class="tech-grid">
+      <div class="tech-item">
+        <h4>🐳 Docker</h4>
+        <p>Containerization of all microservices with semantic versioning and Docker Hub registry.</p>
+      </div>
+      <div class="tech-item">
+        <h4>⎈ Kubernetes</h4>
+        <p>Orchestration with Deployments, Services, ConfigMaps, Secrets, and rolling updates.</p>
+      </div>
+      <div class="tech-item">
+        <h4>🔧 Jenkins</h4>
+        <p>Declarative multi-stage CI/CD pipeline: Checkout → Build → Test → Deploy → Notify.</p>
+      </div>
+      <div class="tech-item">
+        <h4>⬡ GitHub Actions</h4>
+        <p>Automated workflows for linting, Docker builds, and environment-specific deployments.</p>
+      </div>
+      <div class="tech-item">
+        <h4>🟢 Node.js / Express</h4>
+        <p>Backend runtime for all four microservices with REST API design.</p>
+      </div>
+      <div class="tech-item">
+        <h4>📊 Prometheus + Grafana</h4>
+        <p>Centralized monitoring, metrics collection, and alerting dashboards.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICES STATUS -->
+  <div class="services-bg">
+    <div class="section-header">
+      <div class="section-label">Live Service Status</div>
+      <h2 class="section-title">All Services Running</h2>
+    </div>
+    <div class="services-grid">
+      <div class="service-box">
+        <h3>👤 User Service</h3>
+        <p>Port: <strong>3001</strong> &nbsp;|&nbsp; <span class="status-active">● Running</span></p>
+        <ul>
+          <li>POST /api/users/register</li>
+          <li>POST /api/users/login</li>
+          <li>GET /api/users/profile</li>
+          <li>PUT /api/users/:id</li>
+        </ul>
+      </div>
+      <div class="service-box">
+        <h3>📦 Product Service</h3>
+        <p>Port: <strong>3002</strong> &nbsp;|&nbsp; <span class="status-active">● Running</span></p>
+        <ul>
+          <li>GET /api/products</li>
+          <li>POST /api/products</li>
+          <li>PUT /api/products/:id</li>
+          <li>DELETE /api/products/:id</li>
+        </ul>
+      </div>
+      <div class="service-box">
+        <h3>🛒 Order Service</h3>
+        <p>Port: <strong>3003</strong> &nbsp;|&nbsp; <span class="status-active">● Running</span></p>
+        <ul>
+          <li>POST /api/orders</li>
+          <li>GET /api/orders/:id</li>
+          <li>PATCH /api/orders/:id/status</li>
+          <li>GET /api/orders/user/:uid</li>
+        </ul>
+      </div>
+      <div class="service-box">
+        <h3>🔔 Notification Service</h3>
+        <p>Port: <strong>3004</strong> &nbsp;|&nbsp; <span class="status-pending">● Standby</span></p>
+        <ul>
+          <li>POST /api/notify/email</li>
+          <li>POST /api/notify/in-app</li>
+          <li>GET /api/notify/history</li>
+          <li>DELETE /api/notify/:id</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEPLOYMENT ENVIRONMENTS TABLE -->
+  <div class="env-table-wrap">
+    <h2>Deployment Environments</h2>
+    <table class="env-table">
+      <thead>
+        <tr>
+          <th>Environment</th>
+          <th>Branch</th>
+          <th>Trigger</th>
+          <th>URL</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="status-badge badge-processing">Development</span></td>
+          <td><code>develop</code></td>
+          <td>Push to develop</td>
+          <td><a href="#">dev.shopflow.render.com</a></td>
+          <td><span class="status-active">● Active</span></td>
+        </tr>
+        <tr>
+          <td><span class="status-badge badge-shipped">Staging / QA</span></td>
+          <td><code>release</code></td>
+          <td>Push to release</td>
+          <td><a href="#">qa.shopflow.render.com</a></td>
+          <td><span class="status-active">● Active</span></td>
+        </tr>
+        <tr>
+          <td><span class="status-badge badge-delivered">Production</span></td>
+          <td><code>main</code></td>
+          <td>Push to main</td>
+          <td><a href="#">shopflow.render.com</a></td>
+          <td><span class="status-active">● Active</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p><strong>⬡ ShopFlow DevOps Platform</strong></p>
+    <p>COMSATS University Islamabad, Lahore Campus · Lab-DevOps for Cloud Computing · Semester 6</p>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>

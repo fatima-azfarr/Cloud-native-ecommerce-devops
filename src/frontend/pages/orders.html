@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Dashboard - Orders</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../style.css"></head>
+<body>
+
+        <!-- NAV -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="brand-icon">◈</span>
+            <span class="brand-name">ShopFlow</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="users.html" id="nav-users">Users</a></li>
+            <li><a href="products.html" id="nav-products">Products</a></li>
+            <li><a href="orders.html" id="nav-orders">Orders</a></li>
+            <li><a href="notifications.html" id="nav-notifs">Notifications</a></li>
+        </ul>
+        <div class="nav-status">
+            <span class="status-dot"></span> All Systems Operational
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h2>Order Tracking</h2>
+        <p>Create and manage customer orders — Order Service (Port: 3003)</p>
+    </header>
+
+    <div class="page-content">
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value" id="total-orders">0</div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--warning-color);">
+                <div class="stat-value" id="pending-orders">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--success-color);">
+                <div class="stat-value" id="delivered-orders">0</div>
+                <div class="stat-label">Delivered</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--accent-color);">
+                <div class="stat-value" id="total-revenue">0</div>
+                <div class="stat-label">Revenue (PKR)</div>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search by order ID or customer...">
+                    <button class="btn btn-primary" onclick="searchOrders()">Search</button>
+                </div>
+                <select class="filter-select" id="status-filter" onchange="filterOrders()">
+                    <option value="">Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="openCreateModal()">+ New Order</button>
+        </div>
+
+        <div class="data-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Total (PKR)</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-tbody"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- View / Update Modal -->
+    <div class="modal-overlay" id="view-modal">
+        <div class="modal">
+            <h3>Order Details</h3>
+            <div id="order-detail-content"></div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeViewModal()">Close</button>
+                <button class="btn btn-primary" onclick="applyStatusUpdate()">Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Order Modal -->
+    <div class="modal-overlay" id="create-modal">
+        <div class="modal">
+            <h3>Create New Order</h3>
+            <div class="form-group">
+                <label>Customer Name</label>
+                <input type="text" id="c-customer" placeholder="e.g. Fatima">
+            </div>
+            <div class="form-group">
+                <label>Shipping Address</label>
+                <input type="text" id="c-address" placeholder="e.g. 12 Main Blvd, Lahore">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Product 1</label>
+                    <select id="c-product1">
+                        <option value="">-- Select --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Qty</label>
+                    <input type="number" id="c-qty1" value="1" min="1">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Product 2 (optional)</label>
+                    <select id="c-product2">
+                        <option value="">-- None --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Qty</label>
+                    <input type="number" id="c-qty2" value="1" min="1">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select id="c-payment">
+                    <option value="Cash on Delivery">Cash on Delivery</option>
+                    <option value="Credit Card">Credit Card</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="JazzCash">JazzCash</option>
+                    <option value="EasyPaisa">EasyPaisa</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeCreateModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="createOrder()">Place Order</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 E-Commerce DevOps Project | COMSATS University Islamabad, Lahore Campus</p>
+        
+    </footer>
+
+    <script>
+        const PRODUCTS = [
+            { id: "P001", name: "Wireless Headphones",  price: 8500 },
+            { id: "P002", name: "Running Shoes",         price: 5200 },
+            { id: "P003", name: "Cotton T-Shirt",        price: 1200 },
+            { id: "P004", name: "JavaScript Book",       price: 1800 },
+            { id: "P005", name: "Desk Lamp",             price: 2200 },
+            { id: "P006", name: "USB-C Hub",             price: 3400 },
+            { id: "P007", name: "Yoga Mat",              price: 1500 },
+            { id: "P008", name: "Wall Clock",            price: 900  },
+        ];
+
+        let orders = [
+            {
+                id: "ORD-1001", customer: "Araish",  date: "2025-04-10",
+                items: [{ name: "Wireless Headphones", qty: 1, price: 8500 }],
+                total: 8500, status: "Delivered", address: "45 Model Town, Lahore", payment: "Credit Card"
+            },
+            {
+                id: "ORD-1002", customer: "Fatima",   date: "2025-04-15",
+                items: [{ name: "Cotton T-Shirt", qty: 2, price: 1200 }, { name: "Yoga Mat", qty: 1, price: 1500 }],
+                total: 3900, status: "Shipped", address: "8 Gulberg III, Lahore", payment: "JazzCash"
+            },
+            {
+                id: "ORD-1003", customer: "Uswah", date: "2025-04-22",
+                items: [{ name: "USB-C Hub", qty: 1, price: 3400 }],
+                total: 3400, status: "Processing", address: "22 DHA Phase 5, Lahore", payment: "Bank Transfer"
+            },
+            {
+                id: "ORD-1004", customer: "Adan", date: "2025-05-01",
+                items: [{ name: "JavaScript Book", qty: 1, price: 1800 }, { name: "Desk Lamp", qty: 1, price: 2200 }],
+                total: 4000, status: "Pending", address: "3 Johar Town, Lahore", payment: "Cash on Delivery"
+            },
+            {
+                id: "ORD-1005", customer: "Muneefah", date: "2025-05-05",
+                items: [{ name: "Running Shoes", qty: 1, price: 5200 }],
+                total: 5200, status: "Cancelled", address: "67 Bahria Town, Lahore", payment: "EasyPaisa"
+            },
+            {
+                id: "ORD-1006", customer: "Iffat",  date: "2025-05-10",
+                items: [{ name: "Wall Clock", qty: 2, price: 900 }],
+                total: 1800, status: "Pending", address: "15 Garden Town, Lahore", payment: "Cash on Delivery"
+            },
+        ];
+
+        let viewingId   = null;
+        let orderCounter = 1007;
+
+        const STATUS_LIST = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
+
+        function badgeClass(s) {
+            return { Pending: "badge-pending", Processing: "badge-processing", Shipped: "badge-shipped", Delivered: "badge-delivered", Cancelled: "badge-cancelled" }[s] || "";
+        }
+
+        function renderTable(list) {
+            const tbody = document.getElementById("orders-tbody");
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="6"><div class="no-results">No orders found.</div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(o => `
+                <tr>
+                    <td><strong>${o.id}</strong></td>
+                    <td>${o.customer}</td>
+                    <td>${o.date}</td>
+                    <td>PKR ${o.total.toLocaleString()}</td>
+                    <td><span class="status-badge ${badgeClass(o.status)}">${o.status}</span></td>
+                    <td>
+                        <div class="actions-col">
+                            <button class="btn btn-view btn-sm" onclick="viewOrder('${o.id}')">View</button>
+                            ${o.status !== "Delivered" && o.status !== "Cancelled"
+                                ? `<button class="btn btn-cancel btn-sm" onclick="cancelOrder('${o.id}')">Cancel</button>`
+                                : ""}
+                        </div>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        function updateStats() {
+            document.getElementById("total-orders").textContent    = orders.length;
+            document.getElementById("pending-orders").textContent  = orders.filter(o => o.status === "Pending").length;
+            document.getElementById("delivered-orders").textContent = orders.filter(o => o.status === "Delivered").length;
+            const rev = orders.filter(o => o.status !== "Cancelled").reduce((s, o) => s + o.total, 0);
+            document.getElementById("total-revenue").textContent   = rev.toLocaleString();
+        }
+
+        function getFiltered() {
+            const q  = document.getElementById("search-input").value.toLowerCase();
+            const st = document.getElementById("status-filter").value;
+            return orders.filter(o =>
+                (!q || o.id.toLowerCase().includes(q) || o.customer.toLowerCase().includes(q)) &&
+                (!st || o.status === st)
+            );
+        }
+
+        function searchOrders() { renderTable(getFiltered()); }
+        function filterOrders() { renderTable(getFiltered()); }
+
+        document.getElementById("search-input").addEventListener("keyup", e => {
+            if (e.key === "Enter") searchOrders();
+            if (!e.target.value) filterOrders();
+        });
+
+        /* ---- View Modal ---- */
+        function viewOrder(id) {
+            viewingId = id;
+            const o = orders.find(o => o.id === id);
+            const itemsHtml = o.items.map(i =>
+                `<li><span>${i.name} × ${i.qty}</span><span>PKR ${(i.price * i.qty).toLocaleString()}</span></li>`
+            ).join("");
+
+            const statusOptions = STATUS_LIST.map(s =>
+                `<option value="${s}" ${s === o.status ? "selected" : ""}>${s}</option>`
+            ).join("");
+
+            document.getElementById("order-detail-content").innerHTML = `
+                <div class="detail-section">
+                    <h4>Order Info</h4>
+                    <div class="detail-row"><span>Order ID</span><span>${o.id}</span></div>
+                    <div class="detail-row"><span>Date</span><span>${o.date}</span></div>
+                    <div class="detail-row"><span>Payment</span><span>${o.payment}</span></div>
+                </div>
+                <div class="detail-section">
+                    <h4>Customer</h4>
+                    <div class="detail-row"><span>Name</span><span>${o.customer}</span></div>
+                    <div class="detail-row"><span>Address</span><span>${o.address}</span></div>
+                </div>
+                <div class="detail-section">
+                    <h4>Items</h4>
+                    <ul class="items-list">${itemsHtml}</ul>
+                    <div class="detail-row detail-total" style="margin-top:0.5rem;">
+                        <span>Total</span><span>PKR ${o.total.toLocaleString()}</span>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h4>Status</h4>
+                    <div class="status-update-row">
+                        <select id="status-select" style="flex:1; padding:0.5rem; border:1px solid var(--border-color); border-radius:4px; font-size:0.9rem; outline:none;">${statusOptions}</select>
+                    </div>
+                </div>
+            `;
+            document.getElementById("view-modal").classList.add("open");
+        }
+
+        function applyStatusUpdate() {
+            const newStatus = document.getElementById("status-select").value;
+            const o = orders.find(o => o.id === viewingId);
+            o.status = newStatus;
+            updateStats();
+            renderTable(getFiltered());
+            closeViewModal();
+        }
+
+        function closeViewModal() {
+            document.getElementById("view-modal").classList.remove("open");
+            viewingId = null;
+        }
+
+        /* ---- Cancel ---- */
+        function cancelOrder(id) {
+            if (!confirm("Cancel this order?")) return;
+            orders.find(o => o.id === id).status = "Cancelled";
+            updateStats();
+            renderTable(getFiltered());
+        }
+
+        /* ---- Create Modal ---- */
+        function populateProductDropdowns() {
+            const opts = PRODUCTS.map(p => `<option value="${p.id}">${p.name} (PKR ${p.price.toLocaleString()})</option>`).join("");
+            document.getElementById("c-product1").innerHTML = `<option value="">-- Select --</option>` + opts;
+            document.getElementById("c-product2").innerHTML = `<option value="">-- None --</option>` + opts;
+        }
+
+        function openCreateModal() {
+            populateProductDropdowns();
+            document.getElementById("c-customer").value = "";
+            document.getElementById("c-address").value  = "";
+            document.getElementById("c-qty1").value     = 1;
+            document.getElementById("c-qty2").value     = 1;
+            document.getElementById("create-modal").classList.add("open");
+        }
+
+        function closeCreateModal() {
+            document.getElementById("create-modal").classList.remove("open");
+        }
+
+        function createOrder() {
+            const customer = document.getElementById("c-customer").value.trim();
+            const address  = document.getElementById("c-address").value.trim();
+            const pid1     = document.getElementById("c-product1").value;
+            const qty1     = parseInt(document.getElementById("c-qty1").value) || 1;
+            const pid2     = document.getElementById("c-product2").value;
+            const qty2     = parseInt(document.getElementById("c-qty2").value) || 1;
+            const payment  = document.getElementById("c-payment").value;
+
+            if (!customer || !address || !pid1) { alert("Customer, address, and at least one product are required."); return; }
+
+            const items = [];
+            const p1 = PRODUCTS.find(p => p.id === pid1);
+            items.push({ name: p1.name, qty: qty1, price: p1.price });
+
+            if (pid2) {
+                const p2 = PRODUCTS.find(p => p.id === pid2);
+                items.push({ name: p2.name, qty: qty2, price: p2.price });
+            }
+
+            const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+            const today = new Date().toISOString().slice(0, 10);
+
+            orders.unshift({
+                id: `ORD-${orderCounter++}`,
+                customer, date: today, items, total,
+                status: "Pending", address, payment
+            });
+
+            updateStats();
+            renderTable(getFiltered());
+            closeCreateModal();
+        }
+
+        /* Close on overlay click */
+        document.getElementById("view-modal").addEventListener("click", function(e) { if (e.target === this) closeViewModal(); });
+        document.getElementById("create-modal").addEventListener("click", function(e) { if (e.target === this) closeCreateModal(); });
+
+        renderTable(orders);
+        updateStats();
+    </script>
+
+    <script>
+        document.getElementById("nav-orders").classList.add("active");
+    </script>
+</body>
+</html>

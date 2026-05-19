@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Dashboard - Products</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../style.css"></head>
+<body>
+
+        <!-- NAV -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="brand-icon">◈</span>
+            <span class="brand-name">ShopFlow</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="users.html" id="nav-users">Users</a></li>
+            <li><a href="products.html" id="nav-products">Products</a></li>
+            <li><a href="orders.html" id="nav-orders">Orders</a></li>
+            <li><a href="notifications.html" id="nav-notifs">Notifications</a></li>
+        </ul>
+        <div class="nav-status">
+            <span class="status-dot"></span> All Systems Operational
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h2>Product Catalog</h2>
+        <p>Manage inventory, pricing, and product details — Product Service</p>
+    </header>
+
+    <div class="page-content">
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value" id="total-products">0</div>
+                <div class="stat-label">Total Products</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--success-color);">
+                <div class="stat-value" id="in-stock">0</div>
+                <div class="stat-label">In Stock</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--accent-color);">
+                <div class="stat-value" id="low-stock">0</div>
+                <div class="stat-label">Low Stock (&lt;10)</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--warning-color);">
+                <div class="stat-value" id="categories-count">0</div>
+                <div class="stat-label">Categories</div>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <div class="search-bar">
+                    <input type="text" id="search-input" placeholder="Search products...">
+                    <button class="btn btn-primary" onclick="searchProducts()">Search</button>
+                </div>
+                <select class="filter-select" id="category-filter" onchange="filterProducts()">
+                    <option value="">All Categories</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Clothing">Clothing</option>
+                    <option value="Books">Books</option>
+                    <option value="Home">Home</option>
+                    <option value="Sports">Sports</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="openModal()">+ Add Product</button>
+        </div>
+
+        <div class="data-table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Product Name</th>
+                        <th>Category</th>
+                        <th>Price (PKR)</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="products-tbody"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="modal-overlay" id="product-modal">
+        <div class="modal">
+            <h3 id="modal-title">Add New Product</h3>
+            <div class="form-group">
+                <label>Product Name</label>
+                <input type="text" id="input-name" placeholder="e.g. Wireless Headphones">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="input-desc" placeholder="Short product description..."></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Price (PKR)</label>
+                    <input type="number" id="input-price" placeholder="e.g. 4500" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Stock Quantity</label>
+                    <input type="number" id="input-stock" placeholder="e.g. 50" min="0">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select id="input-category">
+                    <option value="Electronics">Electronics</option>
+                    <option value="Clothing">Clothing</option>
+                    <option value="Books">Books</option>
+                    <option value="Home">Home</option>
+                    <option value="Sports">Sports</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 E-Commerce DevOps Project | COMSATS University Islamabad, Lahore Campus</p>
+        
+    </footer>
+
+    <script>
+        let products = [
+            { id: "P001", name: "Wireless Headphones",  category: "Electronics", price: 8500,  stock: 35 },
+            { id: "P002", name: "Running Shoes",         category: "Sports",      price: 5200,  stock: 12 },
+            { id: "P003", name: "Cotton T-Shirt",        category: "Clothing",    price: 1200,  stock: 80 },
+            { id: "P004", name: "JavaScript Book",       category: "Books",       price: 1800,  stock: 7  },
+            { id: "P005", name: "Desk Lamp",             category: "Home",        price: 2200,  stock: 20 },
+            { id: "P006", name: "USB-C Hub",             category: "Electronics", price: 3400,  stock: 4  },
+            { id: "P007", name: "Yoga Mat",              category: "Sports",      price: 1500,  stock: 30 },
+            { id: "P008", name: "Wall Clock",            category: "Home",        price: 900,   stock: 15 },
+        ];
+
+        let editingId = null;
+        let pidCounter = products.length + 1;
+
+        function renderTable(list) {
+            const tbody = document.getElementById("products-tbody");
+            if (!list.length) {
+                tbody.innerHTML = `<tr><td colspan="6"><div class="no-results">No products found.</div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(p => `
+                <tr>
+                    <td><strong>${p.id}</strong></td>
+                    <td>${p.name}</td>
+                    <td><span class="category-badge">${p.category}</span></td>
+                    <td>PKR ${p.price.toLocaleString()}</td>
+                    <td class="${p.stock < 10 ? 'stock-low' : 'stock-ok'}">${p.stock} ${p.stock < 10 ? '⚠️' : ''}</td>
+                    <td>
+                        <div class="actions-col">
+                            <button class="btn btn-edit" onclick="editProduct('${p.id}')">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteProduct('${p.id}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        function updateStats() {
+            document.getElementById("total-products").textContent = products.length;
+            document.getElementById("in-stock").textContent = products.filter(p => p.stock > 0).length;
+            document.getElementById("low-stock").textContent = products.filter(p => p.stock < 10 && p.stock > 0).length;
+            document.getElementById("categories-count").textContent = new Set(products.map(p => p.category)).size;
+        }
+
+        function getFiltered() {
+            const q   = document.getElementById("search-input").value.toLowerCase();
+            const cat = document.getElementById("category-filter").value;
+            return products.filter(p =>
+                (!q || p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q)) &&
+                (!cat || p.category === cat)
+            );
+        }
+
+        function searchProducts() { renderTable(getFiltered()); }
+        function filterProducts() { renderTable(getFiltered()); }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("search-input").addEventListener("keyup", e => {
+                if (e.key === "Enter") searchProducts();
+                if (!e.target.value) filterProducts();
+            });
+        });
+
+        function openModal(id = null) {
+            editingId = id;
+            document.getElementById("modal-title").textContent = id ? "Edit Product" : "Add New Product";
+            if (id) {
+                const p = products.find(p => p.id === id);
+                document.getElementById("input-name").value     = p.name;
+                document.getElementById("input-desc").value     = p.description || "";
+                document.getElementById("input-price").value    = p.price;
+                document.getElementById("input-stock").value    = p.stock;
+                document.getElementById("input-category").value = p.category;
+            } else {
+                document.getElementById("input-name").value     = "";
+                document.getElementById("input-desc").value     = "";
+                document.getElementById("input-price").value    = "";
+                document.getElementById("input-stock").value    = "";
+                document.getElementById("input-category").value = "Electronics";
+            }
+            document.getElementById("product-modal").classList.add("open");
+        }
+
+        function closeModal() {
+            document.getElementById("product-modal").classList.remove("open");
+            editingId = null;
+        }
+
+        function saveProduct() {
+            const name     = document.getElementById("input-name").value.trim();
+            const price    = parseFloat(document.getElementById("input-price").value);
+            const stock    = parseInt(document.getElementById("input-stock").value);
+            const category = document.getElementById("input-category").value;
+            const description = document.getElementById("input-desc").value.trim();
+
+            if (!name || isNaN(price) || isNaN(stock)) { alert("Name, price, and stock are required."); return; }
+
+            if (editingId) {
+                const p = products.find(p => p.id === editingId);
+                Object.assign(p, { name, price, stock, category, description });
+            } else {
+                const newId = "P" + String(++pidCounter).padStart(3, "0");
+                products.push({ id: newId, name, category, price, stock, description });
+            }
+            updateStats();
+            renderTable(getFiltered());
+            closeModal();
+        }
+
+        function editProduct(id) { openModal(id); }
+
+        function deleteProduct(id) {
+            if (!confirm("Delete this product?")) return;
+            products = products.filter(p => p.id !== id);
+            updateStats();
+            renderTable(getFiltered());
+        }
+
+        document.getElementById("product-modal").addEventListener("click", function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        renderTable(products);
+        updateStats();
+    </script>
+
+    <script>
+        document.getElementById("nav-products").classList.add("active");
+    </script>
+</body>
+</html>
