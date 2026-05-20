@@ -18,59 +18,53 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing dependencies...'
-                sh 'echo Dependencies installed'
             }
         }
 
         stage('Lint') {
             steps {
-                echo 'Running lint checks...'
-                sh 'echo Lint successful'
+                echo 'Running lint...'
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                sh 'echo Tests passed'
             }
         }
 
         stage('Docker Build') {
             steps {
-                echo "Building Docker image ${IMAGE_NAME}:${IMAGE_TAG}"
-                sh 'docker --version || true'
+                echo 'Building Docker image...'
             }
         }
 
         stage('Docker Push') {
             steps {
-                echo 'Simulating Docker push...'
-                sh 'echo Docker image pushed'
+                echo 'Pushing Docker image...'
             }
         }
 
-        stage('Kubernetes Deploy') {
+        stage('Deploy') {
             steps {
-                echo 'Simulating Kubernetes deployment...'
-                sh 'echo Kubernetes deployment successful'
+                echo 'Deploying to Kubernetes...'
             }
         }
 
-        stage('Verify Deployment') {
+        stage('Verify') {
             steps {
                 echo 'Verifying deployment...'
-                sh 'echo All services running'
             }
         }
     }
 
     post {
         success {
-            echo '✅ Pipeline completed successfully!'
+            echo 'Pipeline SUCCESS'
         }
 
         failure {
-            echo '❌ Pipeline failed.'
+            echo 'Pipeline FAILED'
         }
     }
+}
